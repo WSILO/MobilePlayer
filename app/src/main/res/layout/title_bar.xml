@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.atguigu.maxwu.mobileplayer.view.TitleBar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="#ff3097fd"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_topbanner_logo" />
+
+    <TextView
+        android:clickable="true"
+        android:id="@+id/tv_sousuokuang"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/sousuo_bg_selector"
+        android:drawableLeft="@drawable/sousuo_selector"
+        android:text="全网搜索..."
+        android:textColor="@drawable/sousuo_text_color_selector" />
+
+    <RelativeLayout
+        android:id="@+id/rl_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp">
+
+        <ImageView
+            android:id="@+id/tv_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_topbanner_game" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_alignRight="@id/tv_game"
+            android:background="@drawable/point_shape" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/recorde"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_topbanner_record" />
+</com.atguigu.maxwu.mobileplayer.view.TitleBar>
