@@ -14,6 +14,8 @@ import com.atguigu.maxwu.mobileplayer.domain.NetAudioBean;
 import com.atguigu.maxwu.mobileplayer.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import org.xutils.common.util.DensityUtil;
+import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 import static com.atguigu.maxwu.mobileplayer.R.id.tv_context;
+import static com.atguigu.maxwu.mobileplayer.R.id.wrap_content;
 
 
 /**
@@ -73,6 +76,8 @@ public class MultipleAdapter extends RecyclerView.Adapter {
                 return new ImageHolder(View.inflate(context, R.layout.all_image_item, null));
             case TYPE_TEXT:
                 return new TextHolder(View.inflate(context, R.layout.all_text_item, null));
+            case TYPE_GIF:
+                return new GifHolder(View.inflate(context, R.layout.all_gif_item, null));
 
         }
         return new BaseViewHolder(View.inflate(context, R.layout.all_video_item, null));
@@ -86,9 +91,12 @@ public class MultipleAdapter extends RecyclerView.Adapter {
         } else if (holder instanceof ImageHolder) {
             ImageHolder imageHolder = (ImageHolder) holder;
             imageHolder.setData(datas.get(position));
-        }else if (holder instanceof TextHolder) {
+        } else if (holder instanceof TextHolder) {
             TextHolder textHolder = (TextHolder) holder;
             textHolder.setData(datas.get(position));
+        } else if (holder instanceof GifHolder) {
+            GifHolder gifHolder = (GifHolder) holder;
+            gifHolder.setData(datas.get(position));
         }
     }
 
@@ -228,6 +236,35 @@ public class MultipleAdapter extends RecyclerView.Adapter {
         public void setData(NetAudioBean.ListBean mediaItem) {
             super.setData(mediaItem);
             tvContext.setText(mediaItem.getText() + "_" + mediaItem.getType());
+        }
+    }
+
+    private class GifHolder extends BaseViewHolder {
+        TextView tvContext;
+        ImageView imageView;
+        private ImageOptions imageOption;
+
+        public GifHolder(View itemView) {
+            super(itemView);
+            tvContext = (TextView) itemView.findViewById(R.id.tv_context);
+            imageView = (ImageView) itemView.findViewById(R.id.iv_image_gif);
+            imageOption = new ImageOptions.Builder().setRadius(DensityUtil.dip2px(5))
+                    .setSize(wrap_content, -2)
+                    .setIgnoreGif(false)
+                    .setLoadingDrawableId(R.drawable.video_default)
+                    .setFailureDrawableId(R.drawable.video_default)
+                    .setImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .build();
+        }
+
+        @Override
+        public void setData(NetAudioBean.ListBean mediaItem) {
+            super.setData(mediaItem);
+            tvContext.setText(mediaItem.getText() + "_" + mediaItem.getType());
+            if (mediaItem.getGif() != null && mediaItem.getGif().getImages() != null && mediaItem.getGif().getImages().get(0) != null) {
+                x.image().bind(imageView, mediaItem.getGif().getImages().get(0), imageOption);
+                Log.e("TAG", "gifurl -----" + mediaItem.getGif().getImages().get(0));
+            }
         }
     }
 }
