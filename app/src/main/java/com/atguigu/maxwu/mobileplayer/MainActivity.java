@@ -3,9 +3,12 @@ package com.atguigu.maxwu.mobileplayer;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.atguigu.maxwu.mobileplayer.fragment.BaseFragment;
 import com.atguigu.maxwu.mobileplayer.fragment.LocalAudioFragment;
@@ -24,8 +27,10 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private int position;
     private BaseFragment tempFragment;
     private ArrayList<BaseFragment> fragments;
-    private  SensorManager sensorManager;
+    private SensorManager sensorManager;
     private JCVideoPlayer.JCAutoFullscreenListener sensorEventListener;
+    private boolean isExit = false;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     private void initData() {
         setContentView(R.layout.activity_main);
-        radio = (RadioGroup)findViewById(R.id.radio);
+        radio = (RadioGroup) findViewById(R.id.radio);
         fragments = new ArrayList<>();
         addDataToList();
     }
@@ -77,14 +82,14 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     private void addFragment(BaseFragment currentFragment) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if(tempFragment != currentFragment) {
-            if(!currentFragment.isAdded()) {
-                if(tempFragment != null) {
+        if (tempFragment != currentFragment) {
+            if (!currentFragment.isAdded()) {
+                if (tempFragment != null) {
                     ft.hide(tempFragment);
                 }
                 ft.add(R.id.fl_content, currentFragment);
-            }else {
-                if(tempFragment != null) {
+            } else {
+                if (tempFragment != null) {
                     ft.hide(tempFragment);
                 }
                 ft.show(currentFragment);
@@ -93,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
         ft.commit();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -113,5 +119,38 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (position != 0) {
+                position = 0;
+                radio.check(R.id.local_video);
+                return true;
+            } else if (!isExit) {
+                isExit = true;
+                Toast.makeText(MainActivity.this, "再按一次退出软件", Toast.LENGTH_SHORT).show();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isExit = false;
+                    }
+                }, 2000);
+                return true;
+            }
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }
+        super.onDestroy();
+
     }
 }
