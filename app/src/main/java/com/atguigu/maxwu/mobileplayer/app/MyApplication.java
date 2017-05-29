@@ -3,6 +3,9 @@ package com.atguigu.maxwu.mobileplayer.app;
 import android.app.Application;
 import android.content.Context;
 
+import org.xutils.BuildConfig;
+import org.xutils.x;
+
 /**
  * 作者: WuKai
  * 时间: 2017/5/28
@@ -17,6 +20,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+        x.Ext.init(this);
+        x.Ext.setDebug(BuildConfig.DEBUG);
     }
     public static Context getContext(){
         return mContext;
