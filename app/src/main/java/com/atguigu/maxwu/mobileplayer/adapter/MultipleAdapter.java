@@ -71,6 +71,8 @@ public class MultipleAdapter extends RecyclerView.Adapter {
                 return new VideoHolder(View.inflate(context, R.layout.all_video_item, null));
             case TYPE_IMAGE:
                 return new ImageHolder(View.inflate(context, R.layout.all_image_item, null));
+            case TYPE_TEXT:
+                return new TextHolder(View.inflate(context, R.layout.all_text_item, null));
 
         }
         return new BaseViewHolder(View.inflate(context, R.layout.all_video_item, null));
@@ -84,6 +86,9 @@ public class MultipleAdapter extends RecyclerView.Adapter {
         } else if (holder instanceof ImageHolder) {
             ImageHolder imageHolder = (ImageHolder) holder;
             imageHolder.setData(datas.get(position));
+        }else if (holder instanceof TextHolder) {
+            TextHolder textHolder = (TextHolder) holder;
+            textHolder.setData(datas.get(position));
         }
     }
 
@@ -208,6 +213,21 @@ public class MultipleAdapter extends RecyclerView.Adapter {
             if (mediaItem.getImage() != null && mediaItem.getImage().getDownload_url() != null && mediaItem.getImage().getDownload_url().get(0) != null) {
                 Picasso.with(context).load(mediaItem.getImage().getDownload_url().get(0)).placeholder(R.drawable.bg_item).error(R.drawable.bg_item).into(imageView);
             }
+        }
+    }
+
+    private class TextHolder extends BaseViewHolder {
+        private final TextView tvContext;
+
+        public TextHolder(View itemView) {
+            super(itemView);
+            tvContext = (TextView) itemView.findViewById(R.id.tv_context);
+        }
+
+        @Override
+        public void setData(NetAudioBean.ListBean mediaItem) {
+            super.setData(mediaItem);
+            tvContext.setText(mediaItem.getText() + "_" + mediaItem.getType());
         }
     }
 }
