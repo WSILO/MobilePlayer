@@ -70,7 +70,8 @@ public class MultipleAdapter extends RecyclerView.Adapter {
             case TYPE_VIDEO:
                 return new VideoHolder(View.inflate(context, R.layout.all_video_item, null));
             case TYPE_IMAGE:
-                break;
+                return new ImageHolder(View.inflate(context, R.layout.all_image_item, null));
+
         }
         return new BaseViewHolder(View.inflate(context, R.layout.all_video_item, null));
     }
@@ -80,6 +81,9 @@ public class MultipleAdapter extends RecyclerView.Adapter {
         if (holder instanceof VideoHolder) {
             VideoHolder videoHolder = (VideoHolder) holder;
             videoHolder.setData(datas.get(position));
+        } else if (holder instanceof ImageHolder) {
+            ImageHolder imageHolder = (ImageHolder) holder;
+            imageHolder.setData(datas.get(position));
         }
     }
 
@@ -108,12 +112,12 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
         public BaseViewHolder(View convertView) {
             super(convertView);
-            //公共的
+
             ivHeadpic = (ImageView) convertView.findViewById(R.id.iv_headpic);
             tvName = (TextView) convertView.findViewById(R.id.tv_name);
             tvTimeRefresh = (TextView) convertView.findViewById(R.id.tv_time_refresh);
             ivRightMore = (ImageView) convertView.findViewById(R.id.iv_right_more);
-            //bottom
+
             ivVideoKind = (ImageView) convertView.findViewById(R.id.iv_video_kind);
             tvVideoKindText = (TextView) convertView.findViewById(R.id.tv_video_kind_text);
             tvShenheDingNumber = (TextView) convertView.findViewById(R.id.tv_shenhe_ding_number);
@@ -132,7 +136,6 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
             tvTimeRefresh.setText(mediaItem.getPasstime());
 
-            //设置标签
             List<NetAudioBean.ListBean.TagsBean> tagsEntities = mediaItem.getTags();
             if (tagsEntities != null && tagsEntities.size() > 0) {
                 StringBuffer buffer = new StringBuffer();
@@ -141,8 +144,6 @@ public class MultipleAdapter extends RecyclerView.Adapter {
                 }
                 tvVideoKindText.setText(buffer.toString());
             }
-
-            //设置点赞，踩,转发
 
             tvShenheDingNumber.setText(mediaItem.getUp());
             tvShenheCaiNumber.setText(mediaItem.getDown() + "");
@@ -162,7 +163,7 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
         VideoHolder(View convertView) {
             super(convertView);
-            //中间公共部分 -所有的都有
+
             tvContext = (TextView) convertView.findViewById(tv_context);
             utils = new Utils();
             tvPlayNums = (TextView) convertView.findViewById(R.id.tv_play_nums);
@@ -175,18 +176,12 @@ public class MultipleAdapter extends RecyclerView.Adapter {
         public void setData(NetAudioBean.ListBean mediaItem) {
             super.setData(mediaItem);
 
-            //设置文本-所有的都有,只有广告没有哦
             tvContext.setText(mediaItem.getText() + "_" + mediaItem.getType());
 
-            //视频特有的------------------------
-            //第一个参数是视频播放地址，第二个参数是显示封面的地址，第三参数是标题
             boolean setUp = jcvVideoplayer.setUp(
                     mediaItem.getVideo().getVideo().get(0), JCVideoPlayer.SCREEN_LAYOUT_LIST,
                     "");
-            //加载图片
             if (setUp) {
-//                ImageLoader.getInstance().displayImage(mediaItem.getVideo().getThumbnail().get(0),
-//                        jcvVideoplayer.thumbImageView);
                 Picasso.with(context).load(mediaItem.getVideo().getThumbnail().get(0)).into(jcvVideoplayer.thumbImageView);
             }
             tvPlayNums.setText(mediaItem.getVideo().getPlaycount() + "次播放");
@@ -194,5 +189,25 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
         }
 
+    }
+
+    private class ImageHolder extends BaseViewHolder {
+        TextView tvContext;
+        ImageView imageView;
+
+        public ImageHolder(View itemView) {
+            super(itemView);
+            tvContext = (TextView) itemView.findViewById(R.id.tv_context);
+            imageView = (ImageView) itemView.findViewById(R.id.iv_image_icon);
+        }
+
+        @Override
+        public void setData(NetAudioBean.ListBean mediaItem) {
+            super.setData(mediaItem);
+            tvContext.setText(mediaItem.getText() + "_" + mediaItem.getType());
+            if (mediaItem.getImage() != null && mediaItem.getImage().getDownload_url() != null && mediaItem.getImage().getDownload_url().get(0) != null) {
+                Picasso.with(context).load(mediaItem.getImage().getDownload_url().get(0)).placeholder(R.drawable.bg_item).error(R.drawable.bg_item).into(imageView);
+            }
+        }
     }
 }
