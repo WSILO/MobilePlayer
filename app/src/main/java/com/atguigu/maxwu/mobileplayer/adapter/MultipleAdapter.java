@@ -1,10 +1,12 @@
 package com.atguigu.maxwu.mobileplayer.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,7 +27,6 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 import static com.atguigu.maxwu.mobileplayer.R.id.tv_context;
-import static com.atguigu.maxwu.mobileplayer.R.id.wrap_content;
 
 
 /**
@@ -78,6 +79,8 @@ public class MultipleAdapter extends RecyclerView.Adapter {
                 return new TextHolder(View.inflate(context, R.layout.all_text_item, null));
             case TYPE_GIF:
                 return new GifHolder(View.inflate(context, R.layout.all_gif_item, null));
+            case TYPE_AD:
+                return new ADHolder(View.inflate(context, R.layout.all_ad_item, null));
 
         }
         return new BaseViewHolder(View.inflate(context, R.layout.all_video_item, null));
@@ -85,6 +88,7 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         if (holder instanceof VideoHolder) {
             VideoHolder videoHolder = (VideoHolder) holder;
             videoHolder.setData(datas.get(position));
@@ -210,7 +214,7 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
         public ImageHolder(View itemView) {
             super(itemView);
-            tvContext = (TextView) itemView.findViewById(R.id.tv_context);
+            tvContext = (TextView) itemView.findViewById(tv_context);
             imageView = (ImageView) itemView.findViewById(R.id.iv_image_icon);
         }
 
@@ -229,7 +233,7 @@ public class MultipleAdapter extends RecyclerView.Adapter {
 
         public TextHolder(View itemView) {
             super(itemView);
-            tvContext = (TextView) itemView.findViewById(R.id.tv_context);
+            tvContext = (TextView) itemView.findViewById(tv_context);
         }
 
         @Override
@@ -249,7 +253,7 @@ public class MultipleAdapter extends RecyclerView.Adapter {
             tvContext = (TextView) itemView.findViewById(R.id.tv_context);
             imageView = (ImageView) itemView.findViewById(R.id.iv_image_gif);
             imageOption = new ImageOptions.Builder().setRadius(DensityUtil.dip2px(5))
-                    .setSize(wrap_content, -2)
+                    .setSize(ActionMenuView.LayoutParams.WRAP_CONTENT, -2)
                     .setIgnoreGif(false)
                     .setLoadingDrawableId(R.drawable.video_default)
                     .setFailureDrawableId(R.drawable.video_default)
@@ -265,6 +269,19 @@ public class MultipleAdapter extends RecyclerView.Adapter {
                 x.image().bind(imageView, mediaItem.getGif().getImages().get(0), imageOption);
                 Log.e("TAG", "gifurl -----" + mediaItem.getGif().getImages().get(0));
             }
+        }
+    }
+
+    private class ADHolder extends BaseViewHolder {
+        TextView tvContext;
+        ImageView ivImageIcon;
+        Button btnInstall;
+
+        public ADHolder(View itemView) {
+            super(itemView);
+            tvContext = (TextView) itemView.findViewById(tv_context);
+            btnInstall = (Button) itemView.findViewById(R.id.btn_install);
+            ivImageIcon = (ImageView) itemView.findViewById(R.id.iv_image_icon);
         }
     }
 }
