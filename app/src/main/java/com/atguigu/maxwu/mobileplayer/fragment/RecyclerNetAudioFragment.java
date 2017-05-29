@@ -1,5 +1,6 @@
 package com.atguigu.maxwu.mobileplayer.fragment;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atguigu.maxwu.mobileplayer.R;
+import com.atguigu.maxwu.mobileplayer.activity.ShowImageAndGifActivity;
 import com.atguigu.maxwu.mobileplayer.adapter.MultipleAdapter;
 import com.atguigu.maxwu.mobileplayer.domain.NetAudioBean;
 import com.cjj.MaterialRefreshLayout;
@@ -71,6 +73,25 @@ public class RecyclerNetAudioFragment extends BaseFragment {
         });
         adapter = new MultipleAdapter(mContext, datas);
         recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new MultipleAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                NetAudioBean.ListBean listEntity = adapter.getItem(position);
+                if (listEntity != null) {
+                    Intent intent = new Intent(mContext, ShowImageAndGifActivity.class);
+                    if (listEntity.getType().equals("gif")) {
+                        String url = listEntity.getGif().getImages().get(0);
+                        intent.putExtra("url", url);
+                        mContext.startActivity(intent);
+                    } else if (listEntity.getType().equals("image")) {
+                        String url = listEntity.getImage().getBig().get(0);
+                        intent.putExtra("url", url);
+                        mContext.startActivity(intent);
+                    }
+
+                }
+            }
+        });
         return view;
     }
 

@@ -36,7 +36,7 @@ import static com.atguigu.maxwu.mobileplayer.R.id.tv_context;
  * 作用:
  */
 
-public class MultipleAdapter extends RecyclerView.Adapter {
+public class MultipleAdapter extends RecyclerView.Adapter implements View.OnClickListener {
     private Context context;
     private ArrayList<NetAudioBean.ListBean> datas;
     private final static int TYPE_VIDEO = 0;
@@ -44,6 +44,27 @@ public class MultipleAdapter extends RecyclerView.Adapter {
     private final static int TYPE_TEXT = 2;
     private final static int TYPE_GIF = 3;
     private final static int TYPE_AD = 4;
+    private OnItemClickListener listener;
+
+    @Override
+    public void onClick(View v) {
+        if (listener != null) {
+            listener.onItemClick(v, (int) v.getTag());
+        }
+    }
+
+    public NetAudioBean.ListBean getItem(int position) {
+
+        return datas.get(position);
+    }
+
+    public static interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public MultipleAdapter(Context context, ArrayList<NetAudioBean.ListBean> datas) {
         this.context = context;
@@ -70,17 +91,28 @@ public class MultipleAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.e("TAG", "viewType==" + viewType);
+        View view;
         switch (viewType) {
             case TYPE_VIDEO:
-                return new VideoHolder(View.inflate(context, R.layout.all_video_item, null));
+                view = View.inflate(context, R.layout.all_video_item, null);
+                view.setOnClickListener(this);
+                return new VideoHolder(view);
             case TYPE_IMAGE:
-                return new ImageHolder(View.inflate(context, R.layout.all_image_item, null));
+                view = View.inflate(context, R.layout.all_image_item, null);
+                view.setOnClickListener(this);
+                return new ImageHolder(view);
             case TYPE_TEXT:
-                return new TextHolder(View.inflate(context, R.layout.all_text_item, null));
+                view = View.inflate(context, R.layout.all_text_item, null);
+                view.setOnClickListener(this);
+                return new TextHolder(view);
             case TYPE_GIF:
-                return new GifHolder(View.inflate(context, R.layout.all_gif_item, null));
+                view = View.inflate(context, R.layout.all_gif_item, null);
+                view.setOnClickListener(this);
+                return new GifHolder(view);
             case TYPE_AD:
-                return new ADHolder(View.inflate(context, R.layout.all_ad_item, null));
+                view = View.inflate(context, R.layout.all_ad_item, null);
+                view.setOnClickListener(this);
+                return new ADHolder(view);
 
         }
         return new BaseViewHolder(View.inflate(context, R.layout.all_video_item, null));
@@ -102,6 +134,7 @@ public class MultipleAdapter extends RecyclerView.Adapter {
             GifHolder gifHolder = (GifHolder) holder;
             gifHolder.setData(datas.get(position));
         }
+        holder.itemView.setTag(position);
     }
 
     public void setDatas(ArrayList<NetAudioBean.ListBean> datas) {

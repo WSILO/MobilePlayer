@@ -33,5 +33,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.2.0'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'fm.jiecao:jiecaovideoplayer:4.8.3'
-
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
 }
