@@ -203,7 +203,6 @@ public class MultipleAdapter extends RecyclerView.Adapter {
             }
             tvPlayNums.setText(mediaItem.getVideo().getPlaycount() + "次播放");
             tvVideoDuration.setText(utils.stringForTime(mediaItem.getVideo().getDuration() * 1000) + "");
-
         }
 
     }

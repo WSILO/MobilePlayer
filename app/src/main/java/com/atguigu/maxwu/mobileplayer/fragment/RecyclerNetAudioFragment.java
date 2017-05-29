@@ -1,5 +1,6 @@
 package com.atguigu.maxwu.mobileplayer.fragment;
 
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,7 +33,7 @@ public class RecyclerNetAudioFragment extends BaseFragment {
     private final static String NET_AUDIO_URL = "http://s.budejie.com/topic/list/jingxuan/1/budejie-android-6.2.8/0-20.json?market=baidu&udid=863425026599592&appname=baisibudejie&os=4.2.2&client=android&visiting=&mac=98%3A6c%3Af5%3A4b%3A72%3A6d&ver=6.2.8";
     private final static String LAST_URL = "http://s.budejie.com/topic/list/jingxuan/1/budejie-android-6.2.8/0-";
     private final static String NEXT_URL = ".json?market=baidu&udid=863425026599592&appname=baisibudejie&os=4.2.2&client=android&visiting=&mac=98%3A6c%3Af5%3A4b%3A72%3A6d&ver=6.2.8\\";
-    private int count = 30;
+    private int count = 20;
     private boolean isRefresh = true;
     private ArrayList<NetAudioBean.ListBean> datas = new ArrayList<>();
 
@@ -52,19 +53,54 @@ public class RecyclerNetAudioFragment extends BaseFragment {
             @Override
             public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
                 isRefresh = true;
-                getDataFromNet();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getDataFromNet();
+                    }
+                }, 2000);
+
             }
 
             @Override
             public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
                 super.onRefreshLoadMore(materialRefreshLayout);
                 isRefresh = false;
-
+                getMoreData();
             }
         });
         adapter = new MultipleAdapter(mContext, datas);
         recyclerView.setAdapter(adapter);
         return view;
+    }
+
+    private void getMoreData() {
+        String newUrl = LAST_URL + count + NEXT_URL;
+        RequestParams request = new RequestParams(newUrl);
+        x.http().get(request, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e("TAG", "onSuccess--result---" + result);
+                parseJson(result);
+                refresh.finishRefreshLoadMore();
+                count += 20;
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(mContext, "onerror-----" + ex.getStackTrace(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     @Override
@@ -80,6 +116,7 @@ public class RecyclerNetAudioFragment extends BaseFragment {
             public void onSuccess(String result) {
                 Log.e("TAG", "onSuccess--result---" + result);
                 parseJson(result);
+                refresh.finishRefresh();
             }
 
             @Override
@@ -101,13 +138,24 @@ public class RecyclerNetAudioFragment extends BaseFragment {
 
     private void parseJson(String result) {
         NetAudioBean netAudioBean = (new Gson()).fromJson(result, NetAudioBean.class);
-        ArrayList<NetAudioBean.ListBean> list = (ArrayList<NetAudioBean.ListBean>) netAudioBean.getList();
-        if (list != null && list.size() > 0) {
-            adapter.setDatas(list);
-            textView.setVisibility(View.GONE);
+        if(isRefresh) {
+            ArrayList<NetAudioBean.ListBean> list = (ArrayList<NetAudioBean.ListBean>) netAudioBean.getList();
+            if (list != null && list.size() > 0) {
+                adapter.setDatas(list);
+                textView.setVisibility(View.GONE);
+            } else {
+                textView.setVisibility(View.VISIBLE);
+            }
         }else {
-            textView.setVisibility(View.VISIBLE);
+            ArrayList<NetAudioBean.ListBean> list = (ArrayList<NetAudioBean.ListBean>) netAudioBean.getList();
+            if (list != null && list.size() > 0) {
+                adapter.setDatas(list);
+                textView.setVisibility(View.GONE);
+            } else {
+                textView.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
 
